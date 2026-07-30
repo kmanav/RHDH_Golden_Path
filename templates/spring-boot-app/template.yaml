@@ -161,15 +161,48 @@ spec:
         catalogInfoPath: /catalog-info.yaml
 
     - id: deploy-tekton-pipeline
-      name: Deploy Tekton Pipeline via ArgoCD App
-      action: argocd:create-resources
+      name: Deploy Tekton Pipeline via ArgoCD App                                                           
+      action: http:backstage:request
       input:
-        projectName: ${{ parameters.repoName }}-argocd-tekton-pipeline
-        appName: ${{ parameters.repoName }}-tekton-ci
-        argoInstance: default
-        namespace: ${{ parameters.namespace }}
-        repoUrl: ${{ "https://github.com/" + parameters.orgName + "/" + parameters.repoName + ".git" }}
-        path: 'tekton'
+        method: POST
+        path: 'http://${{ parameters.argocdServer }}/api/v1/applications'
+        headers:
+          content-type: 'application/json'
+        body:
+          apiVersion: argoproj.io/v1alpha1
+          kind: Application
+          metadata:
+            name: ${{ parameters.repoName }}-tekton-ci                                                      
+            namespace: openshift-gitops
+          spec:
+            project: default
+            source:
+              repoURL: ${{ "https://github.com/" + parameters.orgName + "/" + parameters.repoName + ".git" }}
+              targetRevision: HEAD
+              path: tekton
+            destination:
+              server: 'https://kubernetes.default.svc'
+              namespace: ${{ parameters.namespace }}                                                        
+            syncPolicy:
+              automated:
+                prune: true
+                selfHeal: true                                                                              
+              syncOptions:
+                - CreateNamespace=true
+        auth:
+          username: ${{ parameters.argocdUsername }}
+          password: ${{ parameters.argocdPassword }}
+
+
+
+
+
+
+
+
+
+
+
 
     - id: register-api
       name: Registering the API
