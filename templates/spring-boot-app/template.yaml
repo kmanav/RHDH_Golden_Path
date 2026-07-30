@@ -22,7 +22,7 @@ spec:
         repoName:
           title: Repository Name
           type: string
-          default: spring-boot-nodeJS-app
+          default: spring-boot-reactJS-app
         repoVisibility:
           title: Repo visibility
           type: string
@@ -159,7 +159,6 @@ spec:
       input:
         repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
         catalogInfoPath: /catalog-info.yaml
-
     - id: deploy-tekton-pipeline
       name: Deploy Tekton Pipeline via ArgoCD App                                                           
       action: http:backstage:request
@@ -168,6 +167,7 @@ spec:
         path: 'http://${{ parameters.argocdServer }}/api/v1/applications'
         headers:
           content-type: 'application/json'
+          Cookie: 'argocd.token=${{ parameters.argocdPassword }}'
         body:
           apiVersion: argoproj.io/v1alpha1
           kind: Application
