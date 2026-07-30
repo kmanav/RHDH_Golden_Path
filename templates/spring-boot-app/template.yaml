@@ -189,10 +189,7 @@ spec:
                 selfHeal: true                                                                              
               syncOptions:
                 - CreateNamespace=true
-        auth:
-          username: ${{ parameters.argocdUsername }}
-          password: ${{ parameters.argocdPassword }}
-
+                
     - id: register-api
       name: Registering the API
       action: catalog:register
