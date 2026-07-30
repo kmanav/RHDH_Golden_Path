@@ -159,20 +159,18 @@ spec:
       input:
         repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
         catalogInfoPath: /catalog-info.yaml
+
+
     - id: deploy-tekton-pipeline
-      name: Deploy Tekton Pipeline via ArgoCD App                                                           
-      action: http:backstage:request
+      name: Deploy Tekton Pipeline via ArgoCD App
+      action: kubernetes:apply
       input:
-        method: POST
-        path: 'http://${{ parameters.argocdServer }}/api/v1/applications'
-        headers:
-          content-type: 'application/json'
-          Cookie: 'argocd.token=${{ parameters.argocdPassword }}'
-        body:
+        namespaced: true
+        manifest: |
           apiVersion: argoproj.io/v1alpha1
           kind: Application
           metadata:
-            name: ${{ parameters.repoName }}-tekton-ci                                                      
+            name: ${{ parameters.repoName }}-tekton-ci
             namespace: openshift-gitops
           spec:
             project: default
@@ -182,14 +180,16 @@ spec:
               path: tekton
             destination:
               server: 'https://kubernetes.default.svc'
-              namespace: ${{ parameters.namespace }}                                                        
+              namespace: ${{ parameters.namespace }}
             syncPolicy:
               automated:
-                prune: true
-                selfHeal: true                                                                              
+                prune: true                                                                                 
+                selfHeal: true
               syncOptions:
                 - CreateNamespace=true
-                
+
+
+
     - id: register-api
       name: Registering the API
       action: catalog:register
