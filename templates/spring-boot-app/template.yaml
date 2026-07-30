@@ -18,11 +18,11 @@ spec:
         orgName:
           title: GitHub Org
           type: string
-          default: ysoni-redhat
+          default: rhdh-kmanav
         repoName:
           title: Repository Name
           type: string
-          default: spring-rhdhX
+          default: spring-boot-nodeJS-app
         repoVisibility:
           title: Repo visibility
           type: string
