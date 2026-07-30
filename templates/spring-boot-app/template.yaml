@@ -18,7 +18,7 @@ spec:
         orgName:
           title: GitHub Org
           type: string
-          default: rhdh-kmanav
+          default: kmanav-rhdh
         repoName:
           title: Repository Name
           type: string
